@@ -97,7 +97,7 @@
         let month = date.getMonth() + 1;
         if (month < 10) month = "0" + month;
         let year = date.getFullYear();
-        document.getElementById('date').value = `${day}-${month}-${year}`;
+        document.getElementById('date').value = `${year}-${day}-${month}`;
     }
     // set default date to today
     setDateToNow();
