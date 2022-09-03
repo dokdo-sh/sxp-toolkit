@@ -31,7 +31,7 @@
                     <div class="row">
                         <div class="col-md-6 text-center justify-content-center" style="border-radius: 5px;border: 1px solid black;">
                             <div class="row mt-2" style="justify-content: center;">
-                                <input class="form-control" style="width:45%;margin-right:2px;" type="date" name="date" min="2022-03-28" id="date">
+                                <input class="form-control" style="width:45%;margin-right:2px;" type="date" name="date" min="28-03-2022" id="date">
                                 <input class="form-control" style="width:45%;" type="time" name="time" id="time">
                                 <button class="btn btn-sm btn-primary m-2" style="width:50%" id="calculate">Calculate</button>
                             </div>
@@ -97,7 +97,7 @@
         let month = date.getMonth() + 1;
         if (month < 10) month = "0" + month;
         let year = date.getFullYear();
-        document.getElementById('date').value = `${year}-${day}-${month}`;
+        document.getElementById('date').value = `${day}-${month}-${year}`;
     }
     // set default date to today
     setDateToNow();
