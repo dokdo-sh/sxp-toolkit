@@ -1,0 +1,217 @@
+{% extends 'layout.twig' %}
+<!---->
+{% block body %}
+
+<body>
+    <div class="container-fluid position-relative d-flex p-0">
+
+        {% include './blocks/spinner.twig' %} {% include './blocks/sidebar.twig' %}
+
+
+
+        <div class="content">
+
+            {% include './blocks/navbar.twig' %}
+
+            <!-- Content Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="h-100 bg-secondary rounded p-4">
+                    <div class="row">
+                        <div class="col-md-6 text-center blockquote">
+                            <p>Current Height</p>
+                            <p id="height"></p>
+                        </div>
+                        <div class="col-md-6 text-center blockquote">
+                            <p>Current Timestamp</p>
+                            <p id="human"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-100 bg-secondary rounded p-4 mt-2 ">
+                    <div class="row">
+                        <div class="col-md-6 text-center justify-content-center" style="border-radius: 5px;border: 1px solid black;">
+                            <div class="row mt-2" style="justify-content: center;">
+                                <input class="form-control" style="width:45%;margin-right:2px;" type="date" name="date" min="2022-03-28" id="date">
+                                <input class="form-control" style="width:45%;" type="time" name="time" id="time">
+                                <button class="btn btn-sm btn-primary m-2" style="width:50%" id="calculate">Calculate</button>
+                            </div>
+                            <div>
+                                <p>
+                                    <span>Blockheight will be: </span>
+                                    <span id="blockheight"></span>
+                                    <span> </br>the start of this round is blockheight: </span>
+                                    <span id="round"></span>
+
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-center justify-content-center" style="border-radius: 5px;border: 1px solid black;">
+                            <div class="row mt-2" style="justify-content: center;">
+                                <input class="form-control" style="margin-left:10px;margin-right:10px;width:95%" type="number" min="0" name="blockheightInput" id="blockheightInput">
+                                <button class="btn btn-sm btn-primary m-2" style="width:50%" id="calculate2">Calculate</button>
+                            </div>
+                            <div>
+                                <p><span>Corresponding date is: </span><span id="dateOutput"></span></p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Content End -->
+
+
+            {% include './blocks/footer.twig' %}
+        </div>
+        <!-- Content End -->
+
+
+
+    </div>
+
+
+</body>
+{% endblock %} {% block javascripts %}
+<script src="../js/socket.io.slim.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        const socket = io();
+        socket.emit('getLastBlock', {});
+        socket.on('showLastBlock', function(data) {
+            $('#height').html(data.height);
+            $('#unix').html(data.unix);
+            $('#human').html(data.human);
+            console.log(data)
+        });
+    });
+</script>
+
+<script>
+    let timePerBlock = 8; // in seconds
+
+    // ENTERING DATE
+    function setDateToNow() {
+        let date = new Date();
+        let day = date.getDate();
+        if (day < 10) day = "0" + day;
+        let month = date.getMonth() + 1;
+        if (month < 10) month = "0" + month;
+        let year = date.getFullYear();
+        document.getElementById('date').value = `${year}-${month}-${day}`;
+    }
+    // set default date to today
+    setDateToNow();
+
+    function setTimeToNow() {
+        let date = new Date();
+        let hours = date.getHours();
+        if (hours < 10) hours = "0" + hours;
+        let minutes = date.getMinutes();
+        if (minutes < 10) minutes = "0" + minutes;
+        document.getElementById('time').value = `${hours}:${minutes}`;
+    }
+    // set default time to current time
+    setTimeToNow();
+
+
+
+    document.getElementById("calculate").onclick = async() => {
+        // in case of empty date use today
+        if (!document.getElementById("date").value) setDateToNow();
+
+        // function reads date and time from the inputs
+        // format is yyyy-mm-dd and hh:mm
+        let htmlDate = document.getElementById("date").value.split("-");
+        let htmlTime = document.getElementById("time").value.split(":");
+
+        let hours = htmlTime[0];
+        let minutes = htmlTime[1];
+
+        let year = htmlDate[0];
+        let month = htmlDate[1];
+        let day = htmlDate[2];
+
+        let newDate = new Date();
+        newDate.setFullYear(year);
+        newDate.setMonth(month - 1)
+        newDate.setDate(day);
+        newDate.setHours(hours);
+        newDate.setMinutes(minutes);
+        newDate.setSeconds(0);
+        newDate.setMilliseconds(0);
+
+        let dateTimestamp = parseInt(("" + newDate.getTime()).slice(0, -3));
+
+
+        let lastBlockData = await fetch("https://sxp.mainnet.sh/api/blocks/last");
+        let lastBlock = await lastBlockData.json();
+
+        let lastBlockTimestamp = lastBlock.data.timestamp.unix;
+        let lastBlockHeight = lastBlock.data.height;
+
+        let timeDifference = dateTimestamp - lastBlockTimestamp;
+        let blockOffset = Math.round(timeDifference / timePerBlock);
+
+        let newBlockHeight = lastBlockHeight + blockOffset;
+        document.getElementById("blockheight").textContent = newBlockHeight;
+        document.getElementById("round").textContent = (newBlockHeight - (newBlockHeight % 54));
+        // return lastBlockHeight + blockOffset
+    }
+
+
+
+
+    // ENTERING BLOCKHEIGHT
+    async function setBlockheightToNow() {
+        let lastBlockData = await fetch("https://sxp.mainnet.sh/api/blocks/last");
+        let lastBlock = await lastBlockData.json();
+
+        let lastBlockHeight = lastBlock.data.height;
+        document.getElementById('blockheightInput').value = lastBlockHeight;
+    }
+    // set default blockheight to last blockheight
+    setBlockheightToNow();
+
+
+
+
+    document.getElementById("calculate2").onclick = async() => {
+        // function reads blockheight from input
+        let blockHeight = document.getElementById("blockheightInput").value;
+
+        let lastBlockData = await fetch("https://sxp.mainnet.sh/api/blocks/last");
+        let lastBlock = await lastBlockData.json();
+
+        let lastBlockTimestamp = lastBlock.data.timestamp.unix;
+        let lastBlockHeight = lastBlock.data.height;
+
+        let blockheightDifference = blockHeight - lastBlockHeight;
+
+        let timeDifference = blockheightDifference * 8 * 1000;
+
+        let currentTime = new Date().getTime();
+        let newTime = currentTime + timeDifference;
+
+        let newDate = new Date();
+        newDate.setTime(newTime);
+
+
+
+
+
+
+        let newYear = newDate.getFullYear();
+        let newMonth = newDate.getMonth() + 1;
+        let newDay = newDate.getDate();
+        let newHours = newDate.getHours();
+        let newMinutes = newDate.getMinutes();
+
+        if (newMonth < 10) newMonth = "0" + newMonth;
+        if (newDay < 10) newDay = "0" + newDay;
+        if (newHours < 10) newHours = "0" + newHours;
+        if (newMinutes < 10) newMinutes = "0" + newMinutes;
+
+        document.getElementById("dateOutput").textContent = `${newYear}-${newMonth}-${newDay} ${newHours}:${newMinutes}`;
+    }
+</script>
+{% endblock %}

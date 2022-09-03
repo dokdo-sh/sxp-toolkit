@@ -1,0 +1,30 @@
+{
+    "name": "toolkit",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start": "node toolkit.js"
+    },
+    "dependencies": {
+        "async": "^3.1.0",
+        "body-parser": "^1.19.1",
+        "bufferutil": "^4.0.1",
+        "connect-flash": "^0.1.1",
+        "csurf": "^1.10.0",
+        "debug": "~2.6.9",
+        "express": "~4.16.1",
+        "express-session": "^1.16.2",
+        "http-errors": "~1.6.3",
+        "morgan": "~1.9.1",
+        "request": "^2.88.0",
+        "server": "^1.0.27",
+        "twig": "^1.15.4",
+        "utf-8-validate": "^5.0.2",
+        "uuid": "^3.3.2"
+    },
+    "devDependencies": {
+        "browser-sync": "^2.26.7",
+        "@types/socket.io": "^2.1.13",
+        "@types/sxp-api-helper": "git+https://github.com/dokdo-sh/sxp-api-helper.git"
+    }
+}

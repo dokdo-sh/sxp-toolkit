@@ -1,0 +1,15 @@
+# Dependency directories
+node_modules
+
+# database dir
+db/
+
+# Optional npm cache directory
+.npm
+
+# Package lock and temp files
+.package.json
+package-lock.json
+
+# Config file
+config.ini
