@@ -154,9 +154,11 @@
 
         let newBlockHeight = lastBlockHeight + blockOffset;
         document.getElementById("blockheight").textContent = newBlockHeight;
-        document.getElementById("round").textContent = (newBlockHeight - (newBlockHeight % 53) + 1);
+        document.getElementById("round").textContent = (newBlockHeight - (newBlockHeight % 53) + 54);
         // return lastBlockHeight + blockOffset
     }
+
+
 
     // ENTERING BLOCKHEIGHT
     async function setBlockheightToNow() {
@@ -168,6 +170,8 @@
     }
     // set default blockheight to last blockheight
     setBlockheightToNow();
+
+
 
 
     document.getElementById("calculate2").onclick = async() => {
