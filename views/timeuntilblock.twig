@@ -97,18 +97,20 @@
         let month = date.getMonth() + 1;
         if (month < 10) month = "0" + month;
         let year = date.getFullYear();
-        document.getElementById('date').value = `${year}-${month}-${day}`;
+        document.getElementById('date').value = `${year}-${day}-${month}`;
     }
     // set default date to today
     setDateToNow();
 
     function setTimeToNow() {
         let date = new Date();
-        let hours = date.getHours();
+        let hours = date.getUTCHours();
         if (hours < 10) hours = "0" + hours;
-        let minutes = date.getMinutes();
+        let minutes = date.getUTCMinutes();
         if (minutes < 10) minutes = "0" + minutes;
-        document.getElementById('time').value = `${hours}:${minutes}`;
+        let seconds = date.getUTCSeconds();
+        if (seconds < 10) seconds = "0" + seconds;
+        document.getElementById('time').value = `${hours}:${minutes}:${seconds}`;
     }
     // set default time to current time
     setTimeToNow();
@@ -126,19 +128,20 @@
 
         let hours = htmlTime[0];
         let minutes = htmlTime[1];
+        let seconds = htmlTime[2];
 
         let year = htmlDate[0];
-        let month = htmlDate[1];
-        let day = htmlDate[2];
+        let day = htmlDate[1];
+        let month = htmlDate[2];
 
         let newDate = new Date();
-        newDate.setFullYear(year);
-        newDate.setMonth(month - 1)
-        newDate.setDate(day);
-        newDate.setHours(hours);
-        newDate.setMinutes(minutes);
-        newDate.setSeconds(0);
-        newDate.setMilliseconds(0);
+        newDate.setUTCFullYear(year);
+        newDate.setUTCMonth(month - 1)
+        newDate.setUTCDate(day);
+        newDate.setUTCHours(hours);
+        newDate.setUTCMinutes(minutes);
+        newDate.setUTCSeconds(0);
+        newDate.setUTCMilliseconds(0);
 
         let dateTimestamp = parseInt(("" + newDate.getTime()).slice(0, -3));
 
@@ -199,18 +202,20 @@
 
 
 
-        let newYear = newDate.getFullYear();
-        let newMonth = newDate.getMonth() + 1;
-        let newDay = newDate.getDate();
-        let newHours = newDate.getHours();
-        let newMinutes = newDate.getMinutes();
+        let newYear = newDate.getUTCFullYear();
+        let newMonth = newDate.getUTCMonth() + 1;
+        let newDay = newDate.getUTCDate();
+        let newHours = newDate.getUTCHours();
+        let newMinutes = newDate.getUTCMinutes();
+        let newSeconds = newDate.getUTCSeconds();
 
         if (newMonth < 10) newMonth = "0" + newMonth;
         if (newDay < 10) newDay = "0" + newDay;
         if (newHours < 10) newHours = "0" + newHours;
         if (newMinutes < 10) newMinutes = "0" + newMinutes;
+        if (newSeconds < 10) newSeconds = "0" + newSeconds;
 
-        document.getElementById("dateOutput").textContent = `${newYear}-${newMonth}-${newDay} ${newHours}:${newMinutes}`;
+        document.getElementById("dateOutput").textContent = `${newDay}-${newMonth}-${newYear} ${newHours}:${newMinutes}:${newSeconds}`;
     }
 </script>
 {% endblock %}
